@@ -67,8 +67,9 @@ service:
 resources:
   limits:
     memory: 2048Mi
+    cou: 1
   requests:
-    cpu: 300
+    cpu: "200m"
     memory: 512Mi
 probePath: /actuator/health
 livenessProbe:
@@ -80,9 +81,9 @@ livenessProbe:
 readinessProbe:
   initialDelaySeconds: 20
   periodSeconds: 15
-  timeoutSeconds: 10
+  timeoutSeconds: 5
   successThreshold: 1
-  failureThreshold: 40
+  failureThreshold: 80
 terminationGracePeriodSeconds: 20
 
 ingress:
