@@ -77,13 +77,13 @@ pipeline {
         steps {
           container("maven") {
             dir ("./charts/$APP_NAME") {
-              sh "jx step changelog --version v\$(cat ../../VERSION)"
+              //sh "jx step changelog --version v\$(cat ../../VERSION)"
 
               // publish to github
-              sh "make github"
+              //sh "make github"
 
               // Update versions
-              sh "make updatebot/push-version"
+              //sh "make updatebot/push-version"
 
             }
           }
