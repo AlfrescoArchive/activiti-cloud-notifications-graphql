@@ -15,7 +15,7 @@ pipeline {
       CHARTMUSEUM_CREDS    = credentials("jenkins-x-chartmuseum")
       GITHUB_CHARTS_REPO   = "https://github.com/${ORG}/activiti-cloud-helm-charts.git"
       GITHUB_HELM_REPO_URL = "https://${ORG}.github.io/activiti-cloud-helm-charts/"
-      RELEASE_BRANCH       = "master"
+      RELEASE_BRANCH       = "7.0.x"
     }
     stages {
       stage("CI Build and push snapshot") {
