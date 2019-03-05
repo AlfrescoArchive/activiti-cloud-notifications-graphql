@@ -80,10 +80,15 @@ pipeline {
               sh "jx step changelog --version v\$(cat ../../VERSION)"
 
               // publish to github
-              sh "make github"
+              retry(5) { 
+                sh "make github"
+              }
+              sh 'sleep 8'
 
               // Update versions
-              sh "make updatebot/push-version"
+              retry(2) { 
+                sh "make updatebot/push-version"
+              }
 
             }
           }
