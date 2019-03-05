@@ -83,6 +83,7 @@ pipeline {
               retry(5) { 
                 sh "make github"
               }
+              sh 'sleep 8'
 
               // Update versions
               retry(2) { 
