@@ -52,8 +52,8 @@ extraEnv: |
   #       key: expose-keycloak-service-key
 
 image:
-  repository: activiti/activiti-cloud-notifications-graphql
-  tag: latest 
+  repository: docker.io/activiti/activiti-cloud-notifications-graphql
+  tag: 7.1.25
   pullPolicy: IfNotPresent
   
 service:
