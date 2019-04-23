@@ -71,24 +71,25 @@ resources:
   requests:
     cpu: "200m"
     memory: 512Mi
-probePath: /actuator/health
+probePath: '{{ .Values.ingress.path }}/actuator/health'
 livenessProbe:
   initialDelaySeconds: 140
   periodSeconds: 15
   timeoutSeconds: 20
   successThreshold: 1
-  failureThreshold: 40
+  failureThreshold: 3
 readinessProbe:
   initialDelaySeconds: 20
   periodSeconds: 15
   timeoutSeconds: 5
   successThreshold: 1
-  failureThreshold: 80
+  failureThreshold: 3
 terminationGracePeriodSeconds: 20
 
 ingress:
   ## Set to true to enable ingress record generation
   enabled: true
+  path: /notifications
   tls: # overrides .Values.global.gateway.tls  
   tlsSecret: # overrides .Values.global.gateway.tlsSecret  
   hostName: # overrides .Values.global.gateway.host

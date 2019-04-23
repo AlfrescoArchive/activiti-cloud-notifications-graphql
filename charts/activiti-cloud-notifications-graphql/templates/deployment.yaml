@@ -71,6 +71,8 @@ spec:
           value: "false"
         - name: ACT_CLOUD_CONFIG_SERVER_ENABLED
           value: "false"
+        - name: SERVER_SERVLET_CONTEXTPATH
+          value: {{ tpl .Values.ingress.path . | quote }}
 {{- with .Values.extraEnv }}
 {{ tpl . $ | indent 8 }}
 {{- end }}
@@ -78,7 +80,7 @@ spec:
         - containerPort: {{ .Values.service.internalPort }}
         livenessProbe:
           httpGet:
-            path: {{ .Values.probePath }}
+            path: {{ tpl .Values.probePath . | quote }}
             port: {{ .Values.service.internalPort }}
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -87,7 +89,7 @@ spec:
           failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
         readinessProbe:
           httpGet:
-            path: {{ .Values.probePath }}
+            path: {{ tpl .Values.probePath . | quote }}
             port: {{ .Values.service.internalPort }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}  
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
