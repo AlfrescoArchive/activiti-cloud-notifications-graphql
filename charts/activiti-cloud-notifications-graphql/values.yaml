@@ -93,6 +93,9 @@ ingress:
   tls: # overrides .Values.global.gateway.tls  
   tlsSecret: # overrides .Values.global.gateway.tlsSecret  
   hostName: # overrides .Values.global.gateway.host
+  actuator: 
+    enabled: true
+    path: /actuator
   graphiql: 
     enabled: true
     path: /graphiql
