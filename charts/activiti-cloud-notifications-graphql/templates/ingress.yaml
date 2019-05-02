@@ -9,46 +9,46 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    {{- include "kubernetes.io/tls-acme" . | indent 4}} 
-    {{- range $key, $value := .Values.global.gateway.annotations }}
-    {{ $key }}: {{ tpl $value $ | quote }}
-    {{- end }}
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ tpl $value $ | quote }}
-    {{- end }}
+    {{- include "common.ingress-annotations" . | indent 4 }} 
 spec:
   rules:
-    - host: {{ include "ingresshost" $ | quote }}
+    {{- if include "common.ingress-host" . }}
+    - host: {{ template "common.ingress-host" . }}
       http:
+    {{- else }}
+    - http:
+    {{- end }}
         paths:
         {{- if .Values.ingress.actuator.enabled }}
-        - path: {{ tpl .Values.ingress.path . }}{{ .Values.ingress.actuator.path }}
+        - path: {{ template "common.ingress-path" . }}{{ tpl .Values.ingress.actuator.path . }}
           backend:
             serviceName: {{ template "servicename" . }}
             servicePort: {{ .Values.service.externalPort }}
         {{- end }}
         {{- if .Values.ingress.web.enabled }}
-        - path: {{ tpl .Values.ingress.path . }}{{ .Values.ingress.web.path }}
+        - path: {{ template "common.ingress-path" . }}{{ tpl .Values.ingress.web.path . }}
           backend:
             serviceName: {{ template "servicename" . }}
             servicePort: {{ .Values.service.externalPort }}
         {{- end }}
         {{- if .Values.ingress.ws.enabled }}
-        - path: {{ tpl .Values.ingress.path . }}{{ .Values.ingress.ws.path }}
+        - path: {{ template "common.ingress-path" . }}{{ tpl .Values.ingress.ws.path . }}
           backend:
             serviceName: {{ template "servicename" . }}
             servicePort: {{ .Values.service.externalPort }}
         {{- end }}
         {{- if .Values.ingress.graphiql.enabled }}
-        - path: {{ tpl .Values.ingress.path . }}{{ .Values.ingress.graphiql.path }}
+        - path: {{ template "common.ingress-path" . }}{{ tpl .Values.ingress.graphiql.path . }}
           backend:
             serviceName: {{ template "servicename" . }}
             servicePort: {{ .Values.service.externalPort }}
         {{- end }}
-  {{- if default .Values.global.config.tls .Values.ingress.tls}}
+  {{- if include "common.ingress-tls" . }}
   tls:
-  - secretName: {{ template "tlssecretname" . }}
+  - secretName: {{ template "common.ingress-tlssecretname" . }}
+    {{- if include "common.ingress-host" . }}
     hosts:
-    - {{ include "ingresshost" $ }}
+    - {{ template "common.ingress-host" . }}
+    {{- end }}
   {{- end }}
 {{- end }}
