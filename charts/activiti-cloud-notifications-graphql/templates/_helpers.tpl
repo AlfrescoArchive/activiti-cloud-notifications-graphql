@@ -26,7 +26,3 @@ Create a default service name.
 {{- $name := default (include "fullname" .) .Values.service.name -}}
 {{- printf "%s" $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-
-
-
-
