@@ -61,6 +61,7 @@ image:
   pullPolicy: IfNotPresent
   
 service:
+  name: notifications
   type: ClusterIP
   externalPort: 80
   internalPort: 8080
