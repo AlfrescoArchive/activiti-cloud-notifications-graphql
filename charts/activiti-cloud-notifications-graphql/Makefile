@@ -1,12 +1,11 @@
 CHART_REPO := $(or $(CHART_REPOSITORY),http://jenkins-x-chartmuseum:8080)
 CURRENT=$(shell pwd)
-NAME := $(shell basename $(CURRENT))
-ORG := $(or $(ORG),$(shell git remote -v | grep "(fetch)" | sed 's/.*\/\([^ ]*\)\/.*/\1/'))
-OS := $(shell uname)
+NAME := activiti-cloud-notification-graphql
+ORG := $(or $(ORG),activiti)
 APP_NAME := $(or $(APP_NAME),$(NAME))
-RELEASE_VERSION := $(or $(shell cat ../../VERSION),$(shell sed -n 's/^version: //p' Chart.yaml))
-RELEASE_ARTIFACT := $(or $(RELEASE_ARTIFACT),$(NAME))
-RELASE_NAME := $(or $(RELEASE_NAME),$(NAME))
+OS := $(shell uname)
+RELEASE_VERSION := $(shell cat ../../VERSION)
+RELEASE_ARTIFACT := $(or $(RELEASE_ARTIFACT),$(APP_NAME))
 
 GITHUB_CHARTS_REPO := $(or $(GITHUB_CHARTS_REPO),$(shell git config --get remote.origin.url))
 GITHUB_CHARTS_BRANCH := $(or $(GITHUB_CHARTS_BRANCH),gh-pages)
@@ -17,32 +16,28 @@ build: clean
 	helm repo add activiti-cloud-helm-charts https://activiti.github.io/activiti-cloud-helm-charts/
 	helm dependency build
 	helm lint
-	helm install . --name ${RELASE_NAME} --debug --dry-run
+	helm install . --name ${NAME} --debug --dry-run
 
 install:  build
-	helm install . --name ${RELASE_NAME}
+	helm install . --name ${NAME}
 
 upgrade: clean build
-	helm upgrade ${RELASE_NAME} .
+	helm upgrade ${NAME} .
 
 delete:
-	helm delete --purge ${RELASE_NAME}
+	helm delete --purge ${NAME}
 
 clean:
 	rm -rf requirements.lock
 	rm -rf charts
 	rm -rf ${NAME}*.tgz
 
-release: $(NAME)-$(RELEASE_VERSION).tgz
-	curl  -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(RELEASE_VERSION).tgz" $(CHART_REPO)/api/charts
-	rm -rf ${NAME}*.tgz%
-
-$(NAME)-$(RELEASE_VERSION).tgz: build
+release: build
 	helm package .
 
-github: $(NAME)-$(RELEASE_VERSION).tgz
+github:
 	$(eval GITHUB_CHARTS_DIR := $(shell basename $(GITHUB_CHARTS_REPO) .git))
-	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)
+	[[ -d $(GITHUB_CHARTS_DIR) ]] ||git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)
 	cp "$(NAME)-$(RELEASE_VERSION).tgz" $(GITHUB_CHARTS_DIR)
 	cd $(GITHUB_CHARTS_DIR) && \
 	   helm repo index . && \
@@ -73,9 +68,9 @@ endif
 updatebot/push-version: 
 	@echo Resolving push versions for artifacts........
 	$(eval ACTIVITI_CLOUD_DEPENDENCIES_VERSION=$(shell mvn help:evaluate -Dexpression=activiti-cloud-dependencies.version -q -DforceStdout -f ../../pom.xml))
-	
+
 	@echo Doing updatebot push-version.....
-	sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
 	cd ../../ && updatebot push-version --kind helm $(RELEASE_ARTIFACT) $(RELEASE_VERSION)
+	sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
 	cd ../../ && updatebot push-version --kind  make  NOTIFICATIONS_ACTIVITI_CLOUD_DEPENDENCIES_VERSION $(ACTIVITI_CLOUD_DEPENDENCIES_VERSION)
 	
