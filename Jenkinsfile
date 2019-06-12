@@ -57,6 +57,8 @@ pipeline {
             sh "echo \$(jx-release-version) > VERSION"
             sh "mvn versions:set -DnewVersion=\$(cat VERSION)"
 
+            sh "mvn clean install"
+
             dir ("./charts/$APP_NAME") {
               retry(5) {
                 sh "make tag"
