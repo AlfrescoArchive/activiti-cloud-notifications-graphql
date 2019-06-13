@@ -31,13 +31,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.activiti.cloud.notifications.graphql</groupId>
-        <artifactId>activiti-cloud-notifications-graphql-dependencies</artifactId>
-        <version>7.1.0-SNAPSHOT-PR-65-8</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>        
-      <dependency>
         <groupId>org.activiti.cloud.dependencies</groupId>
         <artifactId>activiti-cloud-dependencies</artifactId>
         <version>${activiti-cloud-dependencies.version}</version>
