@@ -1,5 +1,5 @@
-{{- template "common.deployment" (list . "activiti.connector.deployment") -}}
-{{- define "activiti.connector.deployment" -}}
+{{- template "common.deployment" (list . "activiti.notifications.deployment") -}}
+{{- define "activiti.notifications.deployment" -}}
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
