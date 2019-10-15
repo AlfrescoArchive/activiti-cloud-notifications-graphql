@@ -72,10 +72,22 @@ endif
 
 updatebot/push-version: 
 	@echo Resolving push versions for artifacts........
-	$(eval ACTIVITI_CLOUD_DEPENDENCIES_VERSION=$(shell mvn help:evaluate -Dexpression=activiti-cloud-dependencies.version -q -DforceStdout -f ../../pom.xml))
+	$(eval ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION=$(shell mvn help:evaluate -Dexpression=activiti-cloud-notifications-service-graphql.version -q -DforceStdout -f ../../pom.xml))
 	
 	@echo Doing updatebot push-version.....
-	sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
 	cd ../../ && updatebot push-version --kind helm $(RELEASE_ARTIFACT) $(RELEASE_VERSION)
-	cd ../../ && updatebot push-version --kind  make  NOTIFICATIONS_ACTIVITI_CLOUD_DEPENDENCIES_VERSION $(ACTIVITI_CLOUD_DEPENDENCIES_VERSION)
+  cd ../../ && updatebot push-version --kind make  NOTIFICATIONS_ACTIVITI_CLOUD_DEPENDENCIES_VERSION $(ACTIVITI_CLOUD_DEPENDENCIES_VERSION)
+
+  cd ../../ && updatebot push-version --kind maven activiti-cloud-notifications-service-graphql.version $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION)
+  cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
+
+	cd ../../ && rm -rf .updatebot-repos/
+	sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
+
+	cd ../../ && updatebot push-version --kind helm $(RELEASE_ARTIFACT) $(RELEASE_VERSION)
+	cd ../../ && updatebot push-version --kind make  NOTIFICATIONS_ACTIVITI_CLOUD_DEPENDENCIES_VERSION $(ACTIVITI_CLOUD_DEPENDENCIES_VERSION)
+
+	cd ../../ && updatebot push-version --kind maven activiti-cloud-notifications-service-graphql.version $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION)
+	cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
+
 	
