@@ -77,11 +77,7 @@ updatebot/push-version:
 	
 	@echo Doing updatebot push-version.....
 	cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
-	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION) 
-	cd ../../ && rm -rf .updatebot-repos/
-	sleep 10s
-	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) 
-
+	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION)	
 
 	#cd ../../ && rm -rf .updatebot-repos/
 	#sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
