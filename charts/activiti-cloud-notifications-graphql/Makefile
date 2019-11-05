@@ -4,7 +4,8 @@ NAME := $(shell basename $(CURRENT))
 ORG := $(or $(ORG),$(shell git remote -v | grep "(fetch)" | sed 's/.*\/\([^ ]*\)\/.*/\1/'))
 OS := $(shell uname)
 APP_NAME := $(or $(APP_NAME),$(NAME))
-RELEASE_VERSION := $(or $(shell cat ../../VERSION),$(shell sed -n 's/^version: //p' Chart.yaml))
+#RELEASE_VERSION := $(or $(shell cat ../../VERSION),$(shell sed -n 's/^version: //p' Chart.yaml))
+RELEASE_VERSION := $(shell cat ../../VERSION)
 RELEASE_ARTIFACT := $(or $(RELEASE_ARTIFACT),$(NAME))
 RELASE_NAME := $(or $(RELEASE_NAME),$(NAME))
 
@@ -77,13 +78,15 @@ updatebot/push-version:
 	@echo Doing updatebot push-version.....
 	cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
 	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION) 
+	cd ../../ && rm -rf .updatebot-repos/
+	sleep 10
 	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) 
 
 
 	cd ../../ && rm -rf .updatebot-repos/
-	sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
+	#sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
 
-	cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
-	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION) 
-	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) 
+	#cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
+	#cd ../../ && updatebot push-version --kind maven org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION) 
+	#cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) 
 
