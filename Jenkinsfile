@@ -12,7 +12,7 @@ pipeline {
     environment {
       ORG                  = "activiti"
       APP_NAME             = "activiti-cloud-notifications-graphql"
-      CHARTMUSEUM_CREDS    = credentials("jenkins-x-chartmuseum")
+
       GITHUB_CHARTS_REPO   = "https://github.com/${ORG}/activiti-cloud-helm-charts.git"
       GITHUB_HELM_REPO_URL = "https://${ORG}.github.io/activiti-cloud-helm-charts/"
       RELEASE_BRANCH       = "master"
@@ -97,6 +97,13 @@ pipeline {
     }  
     
     post {
+        failure {
+           slackSend(
+             channel: "#activiti-community-builds",
+             color: "danger",
+             message: "activiti-cloud-notifications-graphql branch=$BRANCH_NAME is failed http://jenkins.jx.35.228.195.195.nip.io/job/Activiti/job/activiti-cloud-notifications-graphql/"
+           )
+        } 
         always {
             cleanWs()
         }
