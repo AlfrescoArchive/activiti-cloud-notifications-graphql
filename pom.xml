@@ -22,7 +22,7 @@
   </scm>
   <properties>
     <java.version>11</java.version>
-    <activiti-cloud-notifications-service-graphql.version>7.1.170</activiti-cloud-notifications-service-graphql.version>
+    <activiti-cloud-notifications-service-graphql.version>7.1.182</activiti-cloud-notifications-service-graphql.version>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
@@ -75,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+      <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
     </dependency>
     <!-- Marker Pom for Dependency Conversion Validation  -->
     <dependency>
