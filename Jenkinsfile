@@ -32,7 +32,7 @@ pipeline {
         steps {
           container("maven") {
             sh "mvn versions:set -DnewVersion=$VERSION"
-            sh "mvn install"
+            sh "mvn install -DskipITs=false"
             sh "export VERSION=$VERSION && skaffold build -f skaffold.yaml"
 
             sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$VERSION"
@@ -61,7 +61,7 @@ pipeline {
             sh "echo $VERSION > VERSION"
             sh "mvn versions:set -DnewVersion=$VERSION"
 
-            sh "mvn clean install"
+            sh "mvn clean install -DskipITs"
 
             dir ("./charts/$APP_NAME") {
               sh "make build tag"
