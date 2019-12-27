@@ -3,13 +3,6 @@
 spec:
   template:
     spec:
-      containers:
-        - name: {{ .Chart.Name }}
-          env:
-          {{- if include "common.ingress-path" . }}
-            - name: SERVER_SERVLET_CONTEXTPATH
-              value: {{ include "common.ingress-path" . | quote }}
-          {{- end }} 
       initContainers:
       {{- if .Values.postgres.enabled }}
         - name: wait-for-postgresql
