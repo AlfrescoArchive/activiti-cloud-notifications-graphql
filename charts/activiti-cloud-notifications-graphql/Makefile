@@ -4,8 +4,7 @@ NAME := $(shell basename $(CURRENT))
 ORG := $(or $(ORG),$(shell git remote -v | grep "(fetch)" | sed 's/.*\/\([^ ]*\)\/.*/\1/'))
 OS := $(shell uname)
 APP_NAME := $(or $(APP_NAME),$(NAME))
-#RELEASE_VERSION := $(or $(shell cat ../../VERSION),$(shell sed -n 's/^version: //p' Chart.yaml))
-RELEASE_VERSION := $(shell cat ../../VERSION)
+RELEASE_VERSION := $(or $(VERSION),$(shell cat ../../VERSION),$(shell sed -n 's/^version: //p' Chart.yaml))
 RELEASE_ARTIFACT := $(or $(RELEASE_ARTIFACT),$(NAME))
 RELASE_NAME := $(or $(RELEASE_NAME),$(NAME))
 
@@ -34,14 +33,18 @@ clean:
 	rm -rf charts
 	rm -rf ${NAME}*.tgz
 
-release: $(NAME)-$(RELEASE_VERSION).tgz
+release: package
 	curl  -u $(CHARTMUSEUM_CREDS_USR):$(CHARTMUSEUM_CREDS_PSW) --data-binary "@$(NAME)-$(RELEASE_VERSION).tgz" $(CHART_REPO)/api/charts
 	rm -rf ${NAME}*.tgz%
 
 $(NAME)-$(RELEASE_VERSION).tgz: build
 	helm package .
 
-github: $(NAME)-$(RELEASE_VERSION).tgz
+package: $(NAME)-$(RELEASE_VERSION).tgz
+
+preview: version release
+
+github: package
 	$(eval GITHUB_CHARTS_DIR := $(shell basename $(GITHUB_CHARTS_REPO) .git))
 	git clone -b "$(GITHUB_CHARTS_BRANCH)" "$(GITHUB_CHARTS_REPO)" $(GITHUB_CHARTS_DIR)
 	cp "$(NAME)-$(RELEASE_VERSION).tgz" $(GITHUB_CHARTS_DIR)
@@ -54,18 +57,12 @@ github: $(NAME)-$(RELEASE_VERSION).tgz
 	   git push origin "$(GITHUB_CHARTS_BRANCH)" 
 	rm -rf $(GITHUB_CHARTS_DIR)
 
-tag:
-ifeq ($(OS),Darwin)
-	sed -i "" -e "s/version:.*/version: $(RELEASE_VERSION)/" Chart.yaml
-	sed -i "" -e "s/tag: .*/tag: $(RELEASE_VERSION)/" values.yaml
-else ifeq ($(OS),Linux)
+version:
 	sed -i -e "s/version:.*/version: $(RELEASE_VERSION)/" Chart.yaml
 	sed -i -e "s|repository: .*|repository: $(DOCKER_REGISTRY)/$(ORG)/$(APP_NAME)|" values.yaml
 	sed -i -e "s/tag: .*/tag: $(RELEASE_VERSION)/" values.yaml
-else
-	echo "platfrom $(OS) not supported to release from"
-	exit -1
-endif
+
+tag: version
 	git add --all
 	git commit -m "release $(RELEASE_VERSION)" --allow-empty # if first release then no verion update is performed
 	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
@@ -76,13 +73,11 @@ updatebot/push-version:
 	$(eval ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION=$(shell mvn help:evaluate -Dexpression=activiti-cloud-notifications-service-graphql.version -q -DforceStdout -f ../../pom.xml))
 	
 	@echo Doing updatebot push-version.....
-	cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
-	cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION)	
-
-	#cd ../../ && rm -rf .updatebot-repos/
-	#sleep $$[ ( $$RANDOM % 10 )  + 1 ]s
-
-	#cd ../../ && updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION)
-	#cd ../../ && updatebot push-version --kind maven org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION) 
-	#cd ../../ && updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) 
+	for number in 1 2; do \
+		cd ../../; \
+		updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION); \
+		updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION); \	
+		rm -rf .updatebot-repos/; \
+		sleep $$[ ( $$RANDOM % 10 )  + 1 ]s; \
+	done
 
