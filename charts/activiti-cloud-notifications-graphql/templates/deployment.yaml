@@ -25,7 +25,7 @@ spec:
             - sh
             - -c
             - |
-              until printf "." && nc -z -w 2 {{ include "notifications.rabbitmq-name" . }} {{ .Values.rabbitmq.port | default 5672 }}; do
+              until printf "." && nc -z -w 2 {{ include "notifications.rabbitmq-name" . }} 5672; do
                   sleep 2;
               done;
               echo 'RabbitMq OK ✓'

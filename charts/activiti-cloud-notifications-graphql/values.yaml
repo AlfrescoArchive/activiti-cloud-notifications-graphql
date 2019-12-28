@@ -43,7 +43,6 @@ postgres:
 rabbitmq:
   enabled: true
   name: "rabbitmq" 
-  port: 5672
 
 javaOpts:
   xmx: 2048m
