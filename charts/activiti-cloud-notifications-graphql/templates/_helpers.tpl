@@ -37,6 +37,6 @@ Create a default service name.
 {{- end -}}
 
 {{- define "activiti.notifications.rabbitmq-port" -}}
-{{ tpl toString(.Values.rabbitmq.port) . }}
+{{ tpl (toString .Values.rabbitmq.port) . }}
 {{- end -}}
 
