@@ -66,11 +66,11 @@ pipeline {
             dir ("./charts/$APP_NAME") {
               sh "make build tag"
             }
-            sh "mvn deploy -DskipTests"
-
             sh "export VERSION=$VERSION && skaffold build -f skaffold.yaml"
 
             sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$VERSION"
+
+            sh "mvn deploy -DskipTests"
           }
         }
       }
