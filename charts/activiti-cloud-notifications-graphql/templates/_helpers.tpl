@@ -26,3 +26,13 @@ Create a default service name.
 {{- $name := default (include "fullname" .) .Values.service.name -}}
 {{- printf "%s" $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+
+{{- define "notifications.rabbitmq-name" -}}
+{{- if .Values.global.rabbitmq.host.value }}
+{{ .Values.global.rabbitmq.host.value }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name (.Values.rabbitmq.name | default "rabbitmq") -}}
+{{- end }}
+{{- end -}}
+

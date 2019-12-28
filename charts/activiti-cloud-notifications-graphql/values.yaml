@@ -40,6 +40,11 @@ postgres:
   generateDdl: "false" # default to disable generating Ddl schema
   ddlAuto: "none" # default to disable ddl update
 
+rabbitmq:
+  enabled: true
+  name: "rabbitmq" 
+  port: 5672
+
 javaOpts:
   xmx: 2048m
   xms: 512m
@@ -47,6 +52,10 @@ javaOpts:
 
 ## Allows the specification of additional environment variables
 extraEnv: |
+  {{- if include "common.ingress-path" . }}
+  - name: SERVER_SERVLET_CONTEXTPATH
+    value: {{ include "common.ingress-path" . | quote }}
+  {{- end }} 
   # - name: ACT_KEYCLOAK_URL
   #   valueFrom:
   #     configMapKeyRef:
@@ -59,6 +68,11 @@ image:
   repository: activiti/activiti-cloud-notifications-graphql
   tag: 7.0.0.SR1
   pullPolicy: IfNotPresent
+  
+init:
+  container:
+    image: alpine:3.8
+    imagePullPolicy: IfNotPresent  
   
 service:
   name: notifications
@@ -122,3 +136,10 @@ ingress:
     nginx.ingress.kubernetes.io/session-cookie-hash: "md5"
     nginx.ingress.kubernetes.io/session-cookie-path: '{{ include "common.ingress-path" . }}'
     
+## Add additional volumes and mounts
+extraVolumes: |
+extraVolumeMounts: |
+
+## Additional init containers, e. g. to wait for a db or SSO
+extraInitContainers: |
+

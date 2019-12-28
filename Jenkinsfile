@@ -12,7 +12,8 @@ pipeline {
     environment {
       ORG                  = "activiti"
       APP_NAME             = "activiti-cloud-notifications-graphql"
-
+      VERSION              = jx_release_version()
+      CHARTMUSEUM_CREDS    = credentials('jenkins-x-chartmuseum')
       GITHUB_CHARTS_REPO   = "https://github.com/${ORG}/activiti-cloud-helm-charts.git"
       GITHUB_HELM_REPO_URL = "https://${ORG}.github.io/activiti-cloud-helm-charts/"
       RELEASE_BRANCH       = "master"
@@ -23,22 +24,25 @@ pipeline {
           branch "PR-*"
         }
         environment {
-          PREVIEW_VERSION = "0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER"
+          PROJECT_VERSION     = maven_project_version()      
+          VERSION = "$PROJECT_VERSION".replaceAll("SNAPSHOT","$BRANCH_NAME-$BUILD_NUMBER-SNAPSHOT")
           PREVIEW_NAMESPACE = "$APP_NAME-$BRANCH_NAME".toLowerCase()
           HELM_RELEASE = "$PREVIEW_NAMESPACE".toLowerCase()
         }
         steps {
           container("maven") {
-            sh "mvn versions:set -DnewVersion=$PREVIEW_VERSION"
-            sh "mvn install"
-            // sh "export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml"
+            sh "mvn versions:set -DnewVersion=$VERSION"
+            sh "mvn install -DskipITs=false"
+            sh "export VERSION=$VERSION && skaffold build -f skaffold.yaml"
 
-            sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
+            sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$VERSION"
 
             // Let's build chart to check for any errors
-            //dir("./charts/$APP_NAME") {
-            //  sh "make build"
-            //}
+            dir("./charts/$APP_NAME") {
+              sh "make preview"
+            }
+
+            sh "mvn deploy -DskipTests"
           }
         }
       }
@@ -54,19 +58,19 @@ pipeline {
 
             sh "jx step git credentials"
             // so we can retrieve the version in later steps
-            sh "echo \$(jx-release-version) > VERSION"
-            sh "mvn versions:set -DnewVersion=\$(cat VERSION)"
+            sh "echo $VERSION > VERSION"
+            sh "mvn versions:set -DnewVersion=$VERSION"
 
-            sh "mvn clean install"
+            sh "mvn clean install -DskipITs"
 
             dir ("./charts/$APP_NAME") {
-              sh "make tag"
+              sh "make build tag"
             }
             sh "mvn deploy -DskipTests"
 
-            sh "export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml"
+            sh "export VERSION=$VERSION && skaffold build -f skaffold.yaml"
 
-            sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
+            sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$VERSION"
           }
         }
       }
@@ -77,7 +81,7 @@ pipeline {
         steps {
           container("maven") {
             dir ("./charts/$APP_NAME") {
-              sh "jx step changelog --generate-yaml=false --version v\$(cat ../../VERSION)"
+              sh "jx step changelog --generate-yaml=false --version v$VERSION"
 
               // publish to github
               retry(5) { 
@@ -107,5 +111,17 @@ pipeline {
         always {
             cleanWs()
         }
+    }
+}
+
+def jx_release_version() {
+    container('maven') {
+        return sh( script: "echo \$(jx-release-version)", returnStdout: true).trim()
+    }
+}
+
+def maven_project_version() {
+    container('maven') {
+        return sh( script: "echo \$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f pom.xml)", returnStdout: true).trim()
     }
 }
