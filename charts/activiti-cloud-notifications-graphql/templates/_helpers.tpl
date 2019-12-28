@@ -36,3 +36,7 @@ Create a default service name.
 {{- end }}
 {{- end -}}
 
+{{- define "notifications.rabbitmq-port" -}}
+{{ .Values.rabbitmq.port | default 5672 }}
+{{- end -}}
+
