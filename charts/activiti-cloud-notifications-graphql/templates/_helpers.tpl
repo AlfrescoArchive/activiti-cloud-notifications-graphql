@@ -28,15 +28,15 @@ Create a default service name.
 {{- end -}}
 
 
-{{- define "notifications.rabbitmq-name" -}}
+{{- define "activiti.notifications.rabbitmq-name" -}}
 {{- if .Values.global.rabbitmq.host.value }}
-{{ .Values.global.rabbitmq.host.value }}
+{{ tpl .Values.global.rabbitmq.host.value . }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name (.Values.rabbitmq.name | default "rabbitmq") -}}
+{{ tpl .Values.rabbitmq.name .}}
 {{- end }}
 {{- end -}}
 
-{{- define "notifications.rabbitmq-port" -}}
-{{ .Values.rabbitmq.port | default 5672 }}
+{{- define "activiti.notifications.rabbitmq-port" -}}
+{{ tpl toString(.Values.rabbitmq.port) . }}
 {{- end -}}
 

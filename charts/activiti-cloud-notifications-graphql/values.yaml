@@ -42,7 +42,7 @@ postgres:
 
 rabbitmq:
   enabled: true
-  name: "rabbitmq" 
+  name: "{{ .Release.Name }}-rabbitmq" 
   port: 5672
 
 javaOpts:

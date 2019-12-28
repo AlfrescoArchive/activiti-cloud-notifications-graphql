@@ -9,15 +9,15 @@ spec:
           image: {{ .Values.init.container.image | quote }}
           imagePullPolicy: {{ .Values.init.container.imagePullPolicy }}
           env: 
-            - name: SPRING_RABBITMQ_HOST
-              value: {{ include "notifications.rabbitmq-name" . | quote }}
-            - name: SPRING_RABBITMQ_PORT
-              value: {{ include "notifications.rabbitmq-port" . | quote }}
+            - name: RABBITMQ_HOST
+              value: {{ include "activiti.notifications.rabbitmq-name" . | quote }}
+            - name: RABBITMQ_PORT
+              value: {{ include "activiti.notifications.rabbitmq-port" . | quote }}
           command:
             - sh
             - -c
             - |
-              until printf "." && nc -z -w 2 $SPRING_RABBITMQ_HOST $SPRING_RABBITMQ_PORT; do
+              until printf "." && nc -z -w 2 $RABBITMQ_HOST $RABBITMQ_PORT; do
                   sleep 2;
               done;
               echo 'RabbitMq OK ✓'
