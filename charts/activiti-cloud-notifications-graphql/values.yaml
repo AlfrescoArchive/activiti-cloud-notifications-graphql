@@ -55,7 +55,7 @@ extraEnv: |
   {{- if include "common.ingress-path" . }}
   - name: SERVER_SERVLET_CONTEXTPATH
     value: {{ include "common.ingress-path" . | quote }}
-  {{- end }} 
+  {{- end }}
   # - name: ACT_KEYCLOAK_URL
   #   valueFrom:
   #     configMapKeyRef:
