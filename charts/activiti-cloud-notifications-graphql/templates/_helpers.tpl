@@ -29,11 +29,11 @@ Create a default service name.
 
 
 {{- define "activiti.notifications.rabbitmq-name" -}}
-{{- if .Values.global.rabbitmq.host.value }}
+{{- if .Values.global.rabbitmq.host.value -}}
 {{ tpl .Values.global.rabbitmq.host.value . }}
-{{- else }}
-{{ tpl .Values.rabbitmq.name .}}
-{{- end }}
+{{- else -}}
+{{ tpl .Values.rabbitmq.name . }}
+{{- end -}}
 {{- end -}}
 
 {{- define "activiti.notifications.rabbitmq-port" -}}
