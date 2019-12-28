@@ -76,7 +76,7 @@ updatebot/push-version:
 	for number in 1 2; do \
 		cd ../../; \
 		updatebot push-version --kind make  ACTIVITI_CLOUD_NOTIFICATIONS_VERSION $(RELEASE_VERSION); \
-		updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION); \	
+		updatebot push-version --kind maven org.activiti.cloud.examples:activiti-cloud-notifications-graphql $(RELEASE_VERSION) org.activiti.cloud.notifications.graphql:activiti-cloud-notifications-graphql-dependencies $(ACTIVITI_CLOUD_NOTIFICATIONS_SERVICE_VERSION); \
 		rm -rf .updatebot-repos/; \
 		sleep $$[ ( $$RANDOM % 10 )  + 1 ]s; \
 	done
