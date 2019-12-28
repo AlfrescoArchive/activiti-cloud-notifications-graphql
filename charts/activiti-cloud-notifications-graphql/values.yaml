@@ -64,8 +64,8 @@ extraEnv: |
 # only set this variable if a private registry secret is needed to pull the image
 #registryPullSecrets: private-registry-secret
 image:
-  repository: activiti/activiti-cloud-notifications-graphql
-  tag: 7.0.0.SR1
+  repository: docker.io/activiti/activiti-cloud-notifications-graphql
+  tag: 7.1.300
   pullPolicy: IfNotPresent
   
 init:
