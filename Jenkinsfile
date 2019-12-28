@@ -61,7 +61,7 @@ pipeline {
             sh "echo $VERSION > VERSION"
             sh "mvn versions:set -DnewVersion=$VERSION"
 
-            sh "mvn clean install -DskipITs"
+            sh "mvn clean install -DskipIT=false"
 
             dir ("./charts/$APP_NAME") {
               sh "make build tag"
