@@ -32,7 +32,7 @@ Create a default service name.
 {{- if .Values.global.rabbitmq.host.value }}
 {{ .Values.global.rabbitmq.host.value }}
 {{- else }}
-{{- printf "%s-%s" .Release.Name "rabbitmq" -}}
+{{- printf "%s-%s" .Release.Name (.Values.rabbitmq.name | default "rabbitmq") -}}
 {{- end }}
 {{- end -}}
 
