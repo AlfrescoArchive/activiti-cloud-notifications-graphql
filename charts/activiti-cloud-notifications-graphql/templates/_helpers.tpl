@@ -28,11 +28,3 @@ Create a default service name.
 {{- end -}}
 
 
-{{- define "notifications.rabbitmq-name" -}}
-{{- if .Values.global.rabbitmq.host.value }}
-{{ .Values.global.rabbitmq.host.value }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name "rabbitmq" -}}
-{{- end }}
-{{- end -}}
-

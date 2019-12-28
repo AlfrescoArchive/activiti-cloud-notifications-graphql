@@ -40,10 +40,6 @@ postgres:
   generateDdl: "false" # default to disable generating Ddl schema
   ddlAuto: "none" # default to disable ddl update
 
-rabbitmq:
-  enabled: true
-  name: "rabbitmq" 
-
 javaOpts:
   xmx: 2048m
   xms: 512m

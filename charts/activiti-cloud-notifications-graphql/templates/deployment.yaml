@@ -17,19 +17,6 @@ spec:
               done;
               echo 'PostgreSQL OK ✓'
       {{- end }}
-      {{- if .Values.rabbitmq.enabled }}
-        - name: wait-for-rabbitmq
-          image: {{ .Values.init.container.image | quote }}
-          imagePullPolicy: {{ .Values.init.container.imagePullPolicy }}
-          command:
-            - sh
-            - -c
-            - |
-              until printf "." && nc -z -w 2 {{ include "notifications.rabbitmq-name" . }} 5672; do
-                  sleep 2;
-              done;
-              echo 'RabbitMq OK ✓'
-      {{- end }}
       {{- if .Values.extraInitContainers }}
 {{ tpl .Values.extraInitContainers . | indent 8 }}
       {{- end }}
