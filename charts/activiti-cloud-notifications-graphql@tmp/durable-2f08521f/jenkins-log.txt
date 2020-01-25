@@ -1,0 +1,406 @@
++ make build tag
+rm -rf requirements.lock
+rm -rf charts
+rm -rf activiti-cloud-notifications-graphql*.tgz
+helm init --client-only
+Creating /root/.helm 
+Creating /root/.helm/repository 
+Creating /root/.helm/repository/cache 
+Creating /root/.helm/repository/local 
+Creating /root/.helm/plugins 
+Creating /root/.helm/starters 
+Creating /root/.helm/cache/archive 
+Creating /root/.helm/repository/repositories.yaml 
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com 
+Adding local repo with URL: http://127.0.0.1:8879/charts 
+$HELM_HOME has been configured at /root/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!
+helm repo add charts_activiti https://activiti.github.io/activiti-cloud-charts/
+"charts_activiti" has been added to your repositories
+helm repo add activiti-cloud-helm-charts https://activiti.github.io/activiti-cloud-helm-charts/
+"activiti-cloud-helm-charts" has been added to your repositories
+helm dependency build
+Hang tight while we grab the latest from your chart repositories...
+...Unable to get an update from the "local" chart repository (http://127.0.0.1:8879/charts):
+	Get http://127.0.0.1:8879/charts/index.yaml: dial tcp 127.0.0.1:8879: connect: connection refused
+...Successfully got an update from the "charts_activiti" chart repository
+...Successfully got an update from the "activiti-cloud-helm-charts" chart repository
+...Successfully got an update from the "stable" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading common from repo https://activiti.github.io/activiti-cloud-helm-charts/
+Deleting outdated charts
+helm lint
+==> Linting .
+Lint OK
+
+1 chart(s) linted, no failures
+helm install . --name activiti-cloud-notifications-graphql --debug --dry-run
+[debug] Created tunnel using local port: '33315'
+
+[debug] SERVER: "127.0.0.1:33315"
+
+[debug] Original chart version: ""
+[debug] CHART PATH: /home/jenkins/agent/workspace/oud-notifications-graphql_master/charts/activiti-cloud-notifications-graphql
+
+NAME:   activiti-cloud-notifications-graphql
+REVISION: 1
+RELEASED: Sat Jan 25 12:14:16 2020
+CHART: activiti-cloud-notifications-graphql-0.0.1-SNAPSHOT
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+common:
+  expose:
+    config:
+      domain: ""
+      http: "true"
+      tlsacme: "false"
+  extraEnv: ""
+  global:
+    extraEnv: ""
+    extraInitContainers: ""
+    gateway:
+      domain: ""
+      host: ""
+      http: true
+      tlsacme: false
+    keycloak:
+      client: activiti
+      enabled: true
+      extraEnv: ""
+      host: ""
+      name: keycloak
+      path: /auth
+      realm: ""
+      resource: ""
+      service:
+        port: 80
+        type: http
+      url: ""
+    rabbitmq:
+      host:
+        value: ""
+      password:
+        value: guest
+      username:
+        value: guest
+    registryPullSecrets: []
+  ingress:
+    annotations: {}
+    enabled: false
+    hostName: null
+    path: null
+    tls: null
+    tlsSecret: null
+  registryPullSecrets: []
+db:
+  ddlAuto: none
+  driver: null
+  generateDdl: "false"
+  password: null
+  platform: null
+  uri: null
+  username: null
+extraEnv: |
+  {{- if include "common.ingress-path" . }}
+  - name: SERVER_SERVLET_CONTEXTPATH
+    value: {{ include "common.ingress-path" . | quote }}
+  {{- end }}
+  # - name: ACT_KEYCLOAK_URL
+  #   valueFrom:
+  #     configMapKeyRef:
+  #       name: {{ .Release.Name }}-keycloak-http
+  #       key: expose-keycloak-service-key
+extraInitContainers: ""
+extraVolumeMounts: ""
+extraVolumes: ""
+global:
+  gateway:
+    domain: ""
+    host: ""
+    http: true
+    tlsacme: false
+  keycloak:
+    client: activiti
+    enabled: true
+    extraEnv: ""
+    host: ""
+    name: keycloak
+    path: /auth
+    realm: ""
+    resource: ""
+    service:
+      port: 80
+      type: http
+    url: ""
+  rabbitmq:
+    host:
+      value: ""
+    password:
+      value: guest
+    username:
+      value: guest
+image:
+  pullPolicy: IfNotPresent
+  repository: activiti/activiti-cloud-notifications-graphql
+  tag: 7.0.0.SR1
+ingress:
+  actuator:
+    enabled: true
+    path: /actuator
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers 'Access-Control-Allow-Origin: $http_origin';
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/cors-allow-methods: GET,PUT,POST,DELETE,PATCH,OPTIONS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/session-cookie-hash: md5
+    nginx.ingress.kubernetes.io/session-cookie-name: activiti-cloud-notifications-graphql-route
+    nginx.ingress.kubernetes.io/session-cookie-path: '{{ include "common.ingress-path"
+      . }}'
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "true"
+  enabled: true
+  graphiql:
+    enabled: true
+    path: /graphiql
+  hostName: null
+  path: /notifications
+  tls: null
+  tlsSecret: null
+  web:
+    enabled: true
+    path: /graphql
+  ws:
+    enabled: true
+    path: /ws/graphql
+init:
+  container:
+    image: alpine:3.8
+    imagePullPolicy: IfNotPresent
+javaOpts:
+  other: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC
+    -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90
+  xms: 512m
+  xmx: 2048m
+livenessProbe:
+  failureThreshold: 4
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 4
+postgres:
+  ddlAuto: none
+  enabled: true
+  generateDdl: "false"
+  name: postgres
+  password: null
+  port: 5432
+  username: postgres
+probePath: '{{ include "common.ingress-path" . }}/actuator/health'
+rabbitmq:
+  enabled: true
+  name: '{{ .Release.Name }}-rabbitmq'
+  port: 5672
+readinessProbe:
+  failureThreshold: 4
+  initialDelaySeconds: 20
+  periodSeconds: 15
+  successThreshold: 1
+  timeoutSeconds: 3
+replicaCount: 1
+resources:
+  limits:
+    memory: 2048Mi
+  requests:
+    cpu: 500m
+    memory: 768Mi
+service:
+  annotations:
+    fabric8.io/expose: "false"
+  externalPort: 80
+  internalPort: 8080
+  name: notifications
+  type: ClusterIP
+terminationGracePeriodSeconds: 20
+
+HOOKS:
+MANIFEST:
+
+---
+# Source: activiti-cloud-notifications-graphql/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    fabric8.io/expose: "false"
+  labels:
+    app: activiti-cloud-notifications-graphql
+    chart: activiti-cloud-notifications-graphql-0.0.1-SNAPSHOT
+    heritage: Tiller
+    release: activiti-cloud-notifications-graphql
+  name: notifications
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: activiti-cloud-notifications-graphql
+  type: ClusterIP
+---
+# Source: activiti-cloud-notifications-graphql/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: activiti-cloud-notifications-graphql
+    chart: activiti-cloud-notifications-graphql-0.0.1-SNAPSHOT
+    draft: draft-app
+    heritage: Tiller
+    release: activiti-cloud-notifications-graphql
+  name: activiti-cloud-notifications-graphql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: activiti-cloud-notifications-graphql
+        draft: draft-app
+        release: activiti-cloud-notifications-graphql
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Xmx2048m -Xms512m -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true
+            -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4
+            -XX:AdaptiveSizePolicyWeight=90
+        - name: SPRING_APPLICATION_NAME
+          value: notifications
+        - name: SPRING_RABBITMQ_HOST
+          value: activiti-cloud-notifications-graphql-rabbitmq
+        - name: SPRING_RABBITMQ_USERNAME
+          value: guest
+        - name: SPRING_RABBITMQ_PASSWORD
+          value: guest
+        - name: ACT_KEYCLOAK_URL
+          value: http:///auth
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://activiti-cloud-notifications-graphql-postgres:5432/postgres
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          value: org.postgresql.Driver
+        - name: SPRING_DATASOURCE_USERNAME
+          value: postgres
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: activiti-cloud-notifications-graphql-postgres
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: org.hibernate.dialect.PostgreSQLDialect
+        - name: SPRING_JPA_GENERATE_DDL
+          value: "false"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: none
+        - name: SERVER_SERVLET_CONTEXTPATH
+          value: /notifications
+        image: activiti/activiti-cloud-notifications-graphql:7.0.0.SR1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /notifications/actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 4
+        name: activiti-cloud-notifications-graphql
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /notifications/actuator/health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 768Mi
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |-
+          until printf "." && nc -z -w 2 $RABBITMQ_HOST $RABBITMQ_PORT; do
+              sleep 2;
+          done;
+          echo 'RabbitMq OK ✓'
+        env:
+        - name: RABBITMQ_HOST
+          value: activiti-cloud-notifications-graphql-rabbitmq
+        - name: RABBITMQ_PORT
+          value: "5672"
+        image: alpine:3.8
+        imagePullPolicy: IfNotPresent
+        name: wait-for-rabbitmq
+      terminationGracePeriodSeconds: 20
+---
+# Source: activiti-cloud-notifications-graphql/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: activiti-cloud-notifications-graphql
+  labels:
+    app: activiti-cloud-notifications-graphql
+    chart: activiti-cloud-notifications-graphql-0.0.1-SNAPSHOT
+    release: activiti-cloud-notifications-graphql
+    heritage: Tiller
+  annotations:    
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/configuration-snippet: "more_set_headers 'Access-Control-Allow-Origin: $http_origin';\n"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "md5"
+    nginx.ingress.kubernetes.io/session-cookie-name: "activiti-cloud-notifications-graphql-route"
+    nginx.ingress.kubernetes.io/session-cookie-path: "/notifications"
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "true" 
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /notifications/actuator
+          backend:
+            serviceName: notifications
+            servicePort: 80
+        - path: /notifications/graphql
+          backend:
+            serviceName: notifications
+            servicePort: 80
+        - path: /notifications/ws/graphql
+          backend:
+            serviceName: notifications
+            servicePort: 80
+        - path: /notifications/graphiql
+          backend:
+            serviceName: notifications
+            servicePort: 80
+sed -i -e "s/version:.*/version: 7.1.329/" Chart.yaml
+sed -i -e "s|repository: .*|repository: docker.io/activiti/activiti-cloud-notifications-graphql|" values.yaml
+sed -i -e "s/tag: .*/tag: 7.1.329/" values.yaml
+git add --all
