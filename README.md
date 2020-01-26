@@ -6,7 +6,6 @@
 [![ASL 2.0](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Activiti/activiti-cloud-notifications-graphql/blob/master/LICENSE.txt)
 [![CLA](https://cla-assistant.io/readme/badge/Activiti/activiti-cloud-notifications-graphql)](https://cla-assistant.io/Activiti/activiti-cloud-notifications-graphql)
 [![Docker Build Status](https://img.shields.io/docker/build/activiti/activiti-cloud-notifications-graphql.svg)](https://hub.docker.com/r/activiti/activiti-cloud-notifications-graphql/)
-[![Known Vulnerabilities](https://snyk.io/test/github/Activiti/activiti-cloud-notifications-graphql/badge.svg)](https://snyk.io/test/github/Activiti/activiti-cloud-notifications-graphql)
 [![security status](https://www.meterian.com/badge/gh/Activiti/activiti-cloud-notifications-graphql/security)](https://www.meterian.com/report/gh/Activiti/activiti-cloud-notifications-graphql)
 [![stability status](https://www.meterian.com/badge/gh/Activiti/activiti-cloud-notifications-graphql/stability)](https://www.meterian.com/report/gh/Activiti/activiti-cloud-notifications-graphql)
 
