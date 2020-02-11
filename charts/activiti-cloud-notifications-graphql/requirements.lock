@@ -1,0 +1,6 @@
+dependencies:
+- name: common
+  repository: https://activiti.github.io/activiti-cloud-helm-charts/
+  version: 1.1.29
+digest: sha256:73f39ee404773bf55d51dea97c409f85ad24cc2b86bbf2f0fb474a7f23bbb0bf
+generated: 2020-02-11T10:36:42.450209183Z
