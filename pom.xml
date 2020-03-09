@@ -21,7 +21,7 @@
     <tag>HEAD</tag>
   </scm>
   <properties>
-    <activiti-cloud-notifications-service-graphql.version>7.1.408</activiti-cloud-notifications-service-graphql.version>
+    <activiti-cloud-notifications-service-graphql.version>7.1.409</activiti-cloud-notifications-service-graphql.version>
   </properties>
   <dependencyManagement>
     <dependencies>
