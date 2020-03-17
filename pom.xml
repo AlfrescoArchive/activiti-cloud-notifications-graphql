@@ -11,7 +11,7 @@
   </parent>
   <groupId>org.activiti.cloud.examples</groupId>
   <artifactId>activiti-cloud-notifications-graphql</artifactId>
-  <version>7.1.371</version>
+  <version>7.1.0.M7.MOCK3</version>
   <name>Activiti Cloud :: Notifications GraphQL</name>
   <url>http://activiti.org</url>
   <scm>
@@ -21,7 +21,7 @@
     <tag>HEAD</tag>
   </scm>
   <properties>
-    <activiti-cloud-notifications-service-graphql.version>7.1.414</activiti-cloud-notifications-service-graphql.version>
+    <activiti-cloud-notifications-service-graphql.version>7.1.0.M7.MOCK3</activiti-cloud-notifications-service-graphql.version>
   </properties>
   <dependencyManagement>
     <dependencies>
